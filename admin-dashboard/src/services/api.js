@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://my-mart-backend-two.vercel.app/api';
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -8,10 +8,8 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('admin_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  const token = localStorage.getItem('vendor_token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
@@ -19,212 +17,77 @@ api.interceptors.response.use(
   response => response,
   error => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('admin_token');
+      localStorage.removeItem('vendor_token');
       window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
 
-const cache = new Map();
-const CACHE_TTL = 60000;
-
-const getCached = (key) => {
-  const cached = cache.get(key);
-  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-    return cached.data;
-  }
-  cache.delete(key);
-  return null;
-};
-
-const setCached = (key, data) => {
-  cache.set(key, { data, timestamp: Date.now() });
-};
-
 // Auth
-export const adminLogin = (email, password) => api.post('/auth/login', { email, password });
-export const getAdminProfile = () => api.get('/auth/profile');
+export const sendForgotPasswordOTP = (email) => api.post('/auth/forgot-password', { email });
+export const verifyForgotPasswordOTP = (email, otp) => api.post('/auth/verify-otp', { email, otp });
+export const resetPassword = (email, otp, newPassword) => api.post('/auth/reset-password', { email, otp, newPassword });
 
-// Admin Dashboard
-export const getDashboardStats = (period = '30') => {
-  const cacheKey = `dashboard_${period}`;
-  const cached = getCached(cacheKey);
-  if (cached) return Promise.resolve({ data: cached });
-  return api.get('/admin/dashboard/stats', { params: { period } }).then(res => {
-    setCached(cacheKey, res.data);
-    return res;
-  });
-};
+// Dashboard - uses vendorDashboardController
+export const getVendorDashboardStats = () => api.get('/vendor/dashboard/dashboard');
+export const getVendorOrderStats = () => api.get('/vendor/dashboard/dashboard');
 
-// Users
-export const getUsers = (params = {}) => api.get('/admin/users', { params });
-export const getUserById = (id) => api.get(`/admin/users/${id}`);
-export const updateUserStatus = (id, is_active) => api.put(`/admin/users/${id}/status`, { is_active });
-export const deleteUser = (id) => {
-  cache.clear();
-  return api.delete(`/admin/users/${id}`);
-};
+// Products - uses products route
+export const getVendorProducts = (params = {}) => api.get('/products/vendor/my-products', { params });
+export const createVendorProduct = (data) => api.post('/products', data);
+export const updateVendorProduct = (id, data) => api.put(`/products/${id}`, data);
+export const deleteVendorProduct = (id) => api.delete(`/products/${id}`);
 
-// Vendor Management (Admin manages vendor accounts, not their products)
-export const getStores = (params = {}) => api.get('/admin/vendors', { params });
-export const getStoreById = (id) => api.get(`/stores/${id}`);
-export const updateStore = (id, data) => api.put(`/stores/${id}`, data);
-export const approveVendor = (storeId) => {
-  cache.clear();
-  return api.put(`/admin/vendors/${storeId}/approve`);
-};
-export const approveStore = (storeId) => {
-  cache.clear();
-  return api.put(`/admin/stores/${storeId}/approve`);
-};
-export const suspendVendor = (id) => {
-  cache.clear();
-  return api.put(`/admin/vendors/${id}/suspend`, { reason: 'Policy violation' });
-};
-export const reactivateVendor = (id) => {
-  cache.clear();
-  return api.put(`/admin/vendors/${id}/reactivate`);
-};
+// Orders - uses orders route
+export const getVendorOrders = (params = {}) => api.get('/orders/vendor/orders', { params });
+export const getVendorOrderById = (id) => api.get(`/orders/${id}`);
+export const updateVendorOrderStatus = (id, status) => api.put(`/orders/vendor/orders/${id}/status`, { status });
+export const markVendorPaymentReceived = (id) => api.put(`/orders/vendor/orders/${id}/payment-status`);
 
-// Products - Admin does NOT manage vendor products
-export const getProducts = (params = {}) => {
-  return api.get('/products', { params });
-};
-export const getProductById = (id) => api.get(`/products/${id}`);
+// Store - uses stores route
+export const getVendorStore = () => api.get('/stores/vendor/my-store');
+export const createVendorStore = (data) => api.post('/stores', data);
+export const updateVendorStore = (data) => api.put('/stores/vendor/my-store', data);
+export const uploadVendorImage = (data) => api.post('/storage/product-image', data);
+export const uploadStoreLogo = (data) => api.post('/storage/store-logo', data);
 
-// Order Stats (Admin only sees summaries, not individual orders)
-export const getOrders = (params = {}) => {
-  return api.get('/admin/orders', { params });
-};
-export const getOrderStats = (params = {}) => {
-  return api.get('/admin/orders/stats', { params });
-};
-export const getOrderById = (id) => api.get(`/orders/${id}`);
-export const updateOrderStatus = (id, status) => api.put(`/admin/orders/${id}/status`, { status });
+// Earnings - uses settlementRoutes
+export const getVendorEarnings = () => api.get('/settlements/vendor/earnings');
+export const getVendorWallet = () => api.get('/settlements/vendor/wallet');
+export const getVendorTransactions = () => api.get('/settlements/vendor/transactions');
+export const getVendorPayoutMethods = () => api.get('/settlements/vendor/payout-methods');
+export const addVendorPayoutMethod = (data) => api.post('/settlements/vendor/payout-methods', data);
+export const getVendorPayoutRequests = () => api.get('/settlements/vendor/payout-requests');
+export const requestVendorPayout = (data) => api.post('/settlements/vendor/payout-requests', data);
 
-// Categories - Admin CRUD
-export const getCategories = () => api.get('/admin/categories');
-export const createCategory = (data) => api.post('/categories', data);
-export const updateCategory = (id, data) => api.put(`/categories/${id}`, data);
-export const deleteCategory = (id) => api.delete(`/categories/${id}`);
-export const getProductsByCategory = (categoryId, params = {}) => api.get(`/admin/categories/${categoryId}/products`, { params });
+// Categories
+export const getCategories = () => api.get('/categories');
 
-// Reviews
-export const getReviews = (params = {}) => api.get('/reviews', { params });
-export const deleteReview = (id) => api.delete(`/reviews/${id}`);
+// Reviews - uses reviews route
+export const getVendorReviews = (params = {}) => api.get('/reviews/vendor/reviews', { params });
+export const respondToReview = (id, response) => api.put(`/reviews/${id}/response`, { response });
 
-// Analytics
-export const getAnalytics = (params = {}) => api.get('/admin/analytics/sales', { params });
-export const getTopProducts = (params = {}) => api.get('/admin/analytics/top-products', { params });
+// Vendor Reports
+export const getVendorSalesReport = (params) => api.get('/vendor/dashboard/reports/sales', { params });
+export const getVendorProductsReport = (params) => api.get('/vendor/dashboard/reports/products', { params });
+export const getVendorOrdersReport = (params) => api.get('/vendor/dashboard/reports/orders', { params });
+export const getVendorRevenueReport = (params) => api.get('/vendor/dashboard/reports/revenue', { params });
+export const getVendorCustomersReport = (params) => api.get('/vendor/dashboard/reports/customers', { params });
+export const getVendorComparisonReport = (params) => api.get('/vendor/dashboard/reports/comparison', { params });
+export const exportVendorReport = (type, params) => api.get(`/vendor/dashboard/reports/export`, { params: { ...params, type } });
 
-// Reports
-export const generateReport = (data) => api.post('/admin/reports/generate', data);
-export const getReports = () => api.get('/admin/reports');
+// Vendor Coupons
+export const getVendorCoupons = () => api.get('/vendor/coupons');
+export const createVendorCoupon = (data) => api.post('/vendor/coupons', data);
+export const updateVendorCoupon = (id, data) => api.put(`/vendor/coupons/${id}`, data);
+export const deleteVendorCoupon = (id) => api.delete(`/vendor/coupons/${id}`);
 
-// Settings
-export const getSettings = () => api.get('/admin/settings');
-export const updateSetting = (key, value) => api.put('/admin/settings', { key, value });
+// Vendor Notifications
+export const getVendorNotifications = (params) => api.get('/notifications', { params });
+export const markVendorNotificationsRead = () => api.put('/notifications/read-all');
 
-// Commission
-export const getCommissionSummary = () => api.get('/admin/commissions');
-export const processPayout = (id, data) => api.post(`/admin/payouts`, { id, ...data });
-
-// Settlements (real earnings/commission data)
-export const getSettlementAdminStats = () => api.get('/settlements/admin/stats');
-export const generateSettlement = (data) => api.post('/settlements/admin/settlements/generate', data);
-export const processPayoutRequest = (data) => api.put('/settlements/admin/payout-requests/process', data);
-export const getAllSettlements = (params) => api.get('/settlements/admin/settlements', { params });
-export const getAllPayoutRequests = (params) => api.get('/settlements/admin/payout-requests', { params });
-
-// Banners
-export const getBanners = () => api.get('/banners/admin/all');
-export const createBanner = (data) => api.post('/banners', data);
-export const updateBanner = (id, data) => api.put(`/banners/${id}`, data);
-export const deleteBanner = (id) => api.delete(`/banners/${id}`);
-
-// Offers
-export const getOffers = () => api.get('/banners/offers/admin/all');
-export const createOffer = (data) => api.post('/banners/offers', data);
-export const updateOffer = (id, data) => api.put(`/banners/offers/${id}`, data);
-export const deleteOffer = (id) => api.delete(`/banners/offers/${id}`);
-
-// Admin Store - Admin's own store management
-export const getAdminStore = () => api.get('/admin/store');
-export const createAdminStore = (data) => api.post('/admin/store', data);
-export const updateAdminStore = (data) => api.put('/admin/store', data);
-
-export const getAdminStoreProducts = () => api.get('/admin/store/products');
-export const createAdminStoreProduct = (data) => api.post('/admin/store/products', data);
-export const updateAdminStoreProduct = (id, data) => api.put(`/admin/store/products/${id}`, data);
-export const deleteAdminStoreProduct = (id) => api.delete(`/admin/store/products/${id}`);
-export const getAdminStoreOrders = (params = {}) => api.get('/admin/store/orders', { params });
-
-export const getAdminAllOrders = (params = {}) => api.get('/admin/orders', { params });
-export const getAdminStoreOrderStats = () => api.get('/admin/store/orders/stats');
-export const updateAdminStoreOrderStatus = (id, status) => api.put(`/admin/store/orders/${id}/status`, { status });
-export const markAdminStorePaymentReceived = (id) => api.put(`/admin/store/orders/${id}/payment-status`);
-
-export const uploadAdminStoreImage = (data) => api.post('/storage/product-image', data);
-
-// Coupons
-export const getCoupons = (params = {}) => api.get('/coupons', { params });
-export const createCoupon = (data) => api.post('/coupons', data);
-export const getCouponById = (id) => api.get(`/coupons/${id}`);
-export const updateCoupon = (id, data) => api.put(`/coupons/${id}`, data);
-export const deleteCoupon = (id) => {
-  cache.clear();
-  return api.delete(`/coupons/${id}`);
-};
-export const toggleCouponStatus = (id) => api.put(`/coupons/${id}/toggle`);
-export const getCouponAnalytics = () => api.get('/coupons/analytics');
-
-// Disputes
-export const getAdminDisputes = (params = {}) => api.get('/disputes', { params });
-export const getAdminDisputeDetail = (id) => api.get(`/disputes/${id}`);
-export const updateAdminDispute = (id, data) => api.put(`/disputes/${id}`, data);
-export const addDisputeResponse = (id, data) => api.post(`/disputes/${id}/response`, data);
-
-// Notifications
-export const getAdminNotifications = (params = {}) => api.get('/notifications', { params });
-export const markAllNotificationsRead = () => api.put('/notifications/read-all');
-export const getNotificationTemplates = () => api.get('/notifications/templates');
-export const createNotificationTemplate = (data) => api.post('/notifications/templates', data);
-export const sendNotification = (data) => api.post('/notifications/send', data);
-export const sendEmailNotification = (data) => api.post('/notifications/email', data);
-export const sendSMSNotification = (data) => api.post('/notifications/sms', data);
-export const getNotificationLogs = (params = {}) => api.get('/notifications/logs', { params });
-
-// Delivery Slots
-export const getDeliverySlots = () => api.get('/orders/delivery-slots');
-
-// Shipping
-export const getShippingProviders = () => api.get('/shipping/providers');
-export const getAllShipments = (params) => api.get('/shipping', { params });
-export const getShipmentByOrder = (orderId) => api.get(`/shipping/order/${orderId}`);
-export const updateShipmentStatus = (id, data) => api.put(`/shipping/${id}/status`, data);
-export const addTrackingUpdate = (id, data) => api.post(`/shipping/${id}/tracking`, data);
-
-// Bulk Operations
-export const bulkImportProducts = (formData) => api.post('/bulk/import/products', formData, {
-  headers: { 'Content-Type': 'multipart/form-data' }
-});
-export const bulkUpdateInventory = (data) => api.put('/bulk/inventory', data);
-export const bulkDeleteProducts = (data) => api.delete('/bulk/products', { data });
-export const getImportJobs = () => api.get('/bulk/import-jobs');
-export const exportProducts = (params) => api.get('/bulk/export/products', { params });
-export const exportOrders = (params) => api.get('/bulk/export/orders', { params });
-export const getExportJobs = () => api.get('/bulk/export-jobs');
-export const getProductsTemplate = () => api.get('/bulk/template/products');
-
-// Staff Management
-export const getStaffRoles = () => api.get('/staff/roles');
-export const createStaffRole = (data) => api.post('/staff/roles', data);
-export const updateStaffRole = (data) => api.put('/staff/staff/update-role', data);
-export const getStoreStaff = (storeId) => api.get(storeId ? `/staff/store/${storeId}/staff` : '/staff/store-staff');
-export const inviteStaff = (data) => api.post('/staff/invite', data);
-export const removeStaff = (staffId) => api.delete(`/staff/staff/${staffId}`);
-export const getStaffActivity = (storeId) => api.get(storeId ? `/staff/store/${storeId}/activity` : '/staff/activity');
-export const getStaffPermissions = () => api.get('/staff/permissions');
+// Vendor Profile / Password
+export const changeVendorPassword = (data) => api.put('/auth/change-password', data);
 
 export default api;
