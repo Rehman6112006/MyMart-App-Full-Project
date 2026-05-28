@@ -38,18 +38,18 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _locating = false;
   bool _locationError = false;
 
-  // Default categories with proper IDs (slug format) and online image URLs
+  // Default categories with proper IDs (slug format)
   final List<Map<String, dynamic>> _defaultCategories = [
-    {'id': 'fresh-vegetables', 'name': 'Fresh Vegetables', 'icon': Icons.eco, 'color': const Color(0xFF22C55E), 'bg': const Color(0xFFDCFCE7), 'image_url': 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=200&h=200&fit=crop'},
-    {'id': 'fresh-fruits', 'name': 'Fresh Fruits', 'icon': Icons.apple, 'color': const Color(0xFFEF4444), 'bg': const Color(0xFFFEE2E2), 'image_url': 'https://images.unsplash.com/photo-1610834781757-86e7a3f2ff0e?w=200&h=200&fit=crop'},
-    {'id': 'chicken-meat-eggs', 'name': 'Chicken/Meat/Eggs', 'icon': Icons.restaurant, 'color': const Color(0xFFB45309), 'bg': const Color(0xFFFEF3C7), 'image_url': 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=200&h=200&fit=crop'},
-    {'id': 'dairy-products', 'name': 'Dairy Products', 'icon': Icons.water_drop, 'color': const Color(0xFF3B82F6), 'bg': const Color(0xFFDBEAFE), 'image_url': 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=200&h=200&fit=crop'},
-    {'id': 'dry-grocery', 'name': 'Dry Grocery', 'icon': Icons.inventory_2, 'color': const Color(0xFFF59E0B), 'bg': const Color(0xFFFEF9C3), 'image_url': 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200&h=200&fit=crop'},
-    {'id': 'snacks-beverages', 'name': 'Snacks & Beverages', 'icon': Icons.local_cafe, 'color': const Color(0xFF8B5CF6), 'bg': const Color(0xFFEDE9FE), 'image_url': 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=200&h=200&fit=crop'},
-    {'id': 'bakery-breakfast', 'name': 'Bakery & Breakfast', 'icon': Icons.cake, 'color': const Color(0xFFEC4899), 'bg': const Color(0xFFFCE7F3), 'image_url': 'https://images.unsplash.com/photo-1509365465985-25d11c17e812?w=200&h=200&fit=crop'},
-    {'id': 'frozen-foods', 'name': 'Frozen Foods', 'icon': Icons.ac_unit, 'color': const Color(0xFF06B6D4), 'bg': const Color(0xFFCFFAFE), 'image_url': 'https://images.unsplash.com/photo-1558730234-d8b2289b1c2f?w=200&h=200&fit=crop'},
-    {'id': 'personal-care', 'name': 'Personal Care', 'icon': Icons.spa, 'color': const Color(0xFF10B981), 'bg': const Color(0xFFD1FAE5), 'image_url': 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=200&h=200&fit=crop'},
-    {'id': 'home-kitchen', 'name': 'Home & Kitchen', 'icon': Icons.home, 'color': const Color(0xFF6366F1), 'bg': const Color(0xFFEEF2FF), 'image_url': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=200&h=200&fit=crop'},
+    {'id': 'fresh-vegetables', 'name': 'Fresh Vegetables', 'icon': Icons.eco, 'color': const Color(0xFF22C55E), 'bg': const Color(0xFFDCFCE7)},
+    {'id': 'fresh-fruits', 'name': 'Fresh Fruits', 'icon': Icons.apple, 'color': const Color(0xFFEF4444), 'bg': const Color(0xFFFEE2E2)},
+    {'id': 'chicken-meat-eggs', 'name': 'Chicken/Meat/Eggs', 'icon': Icons.restaurant, 'color': const Color(0xFFB45309), 'bg': const Color(0xFFFEF3C7)},
+    {'id': 'dairy-products', 'name': 'Dairy Products', 'icon': Icons.water_drop, 'color': const Color(0xFF3B82F6), 'bg': const Color(0xFFDBEAFE)},
+    {'id': 'dry-grocery', 'name': 'Dry Grocery', 'icon': Icons.inventory_2, 'color': const Color(0xFFF59E0B), 'bg': const Color(0xFFFEF9C3)},
+    {'id': 'snacks-beverages', 'name': 'Snacks & Beverages', 'icon': Icons.local_cafe, 'color': const Color(0xFF8B5CF6), 'bg': const Color(0xFFEDE9FE)},
+    {'id': 'bakery-breakfast', 'name': 'Bakery & Breakfast', 'icon': Icons.cake, 'color': const Color(0xFFEC4899), 'bg': const Color(0xFFFCE7F3)},
+    {'id': 'frozen-foods', 'name': 'Frozen Foods', 'icon': Icons.ac_unit, 'color': const Color(0xFF06B6D4), 'bg': const Color(0xFFCFFAFE)},
+    {'id': 'personal-care', 'name': 'Personal Care', 'icon': Icons.spa, 'color': const Color(0xFF10B981), 'bg': const Color(0xFFD1FAE5)},
+    {'id': 'home-kitchen', 'name': 'Home & Kitchen', 'icon': Icons.home, 'color': const Color(0xFF6366F1), 'bg': const Color(0xFFEEF2FF)},
   ];
 
   @override
@@ -409,41 +409,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      width: 60,
-                      height: 60,
+                      width: 48,
+                      height: 48,
                       decoration: BoxDecoration(
                         color: cat['bg'] as Color,
                         shape: BoxShape.circle,
                       ),
-                      child: ClipOval(
-                        child: cat['image_url'] != null
-                            ? CachedNetworkImage(
-                                imageUrl: cat['image_url'],
-                                fit: BoxFit.cover,
-                                placeholder: (_, __) => Icon(
-                                  cat['icon'] as IconData,
-                                  color: cat['color'] as Color,
-                                  size: 24,
-                                ),
-                                errorWidget: (_, __, ___) => Image.asset(
-                                  _getCategoryImage(cat['name'].toString()),
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => Icon(
-                                    cat['icon'] as IconData,
-                                    color: cat['color'] as Color,
-                                    size: 24,
-                                  ),
-                                ),
-                              )
-                            : Image.asset(
-                                _getCategoryImage(cat['name'].toString()),
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Icon(
-                                  cat['icon'] as IconData,
-                                  color: cat['color'] as Color,
-                                  size: 24,
-                                ),
-                              ),
+                      child: Image.asset(
+                        _getCategoryImage(cat['name'].toString()),
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Icon(
+                          cat['icon'] as IconData,
+                          color: cat['color'] as Color,
+                          size: 24,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 4),

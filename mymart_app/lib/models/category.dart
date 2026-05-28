@@ -31,7 +31,7 @@ class Category {
       name: json['name'] ?? '',
       slug: json['slug'],
       description: json['description'],
-      image: json['image_url'] ?? json['image'],
+      image: json['image'],
       icon: json['icon'],
       color: json['color'],
       parentId: json['parent_id']?.toString(),

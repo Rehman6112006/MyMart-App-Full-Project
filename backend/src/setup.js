@@ -69,7 +69,6 @@ async function setup() {
         icon VARCHAR(50),
         color VARCHAR(20),
         parent_id UUID REFERENCES categories(id),
-        image_url TEXT,
         is_featured BOOLEAN DEFAULT false,
         is_active BOOLEAN DEFAULT true,
         created_at TIMESTAMP DEFAULT NOW(),
@@ -395,20 +394,20 @@ async function setup() {
 
     // Seed Categories
     const categories = [
-      { name: 'Electronics', slug: 'electronics', icon: '📱', color: '#E3F2FD', desc: 'Phones, Laptops, Gadgets', image: 'https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=400&h=400&fit=crop' },
-      { name: 'Clothing', slug: 'clothing', icon: '👕', color: '#FCE4EC', desc: 'Fashion & Apparel', image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop' },
-      { name: 'Home & Garden', slug: 'home-garden', icon: '🏠', color: '#E8F5E9', desc: 'Furniture & Decor', image: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=400&h=400&fit=crop' },
-      { name: 'Sports', slug: 'sports', icon: '⚽', color: '#FFF3E0', desc: 'Fitness & Outdoor', image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop' },
-      { name: 'Books', slug: 'books', icon: '📚', color: '#F3E5F5', desc: 'Books & Media', image: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400&h=400&fit=crop' },
-      { name: 'Beauty', slug: 'beauty', icon: '💄', color: '#FFEBEE', desc: 'Beauty & Personal Care', image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=400&fit=crop' },
+      { name: 'Electronics', slug: 'electronics', icon: '📱', color: '#E3F2FD', desc: 'Phones, Laptops, Gadgets' },
+      { name: 'Clothing', slug: 'clothing', icon: '👕', color: '#FCE4EC', desc: 'Fashion & Apparel' },
+      { name: 'Home & Garden', slug: 'home-garden', icon: '🏠', color: '#E8F5E9', desc: 'Furniture & Decor' },
+      { name: 'Sports', slug: 'sports', icon: '⚽', color: '#FFF3E0', desc: 'Fitness & Outdoor' },
+      { name: 'Books', slug: 'books', icon: '📚', color: '#F3E5F5', desc: 'Books & Media' },
+      { name: 'Beauty', slug: 'beauty', icon: '💄', color: '#FFEBEE', desc: 'Beauty & Personal Care' },
     ];
 
     for (const cat of categories) {
       await pool.query(`
-        INSERT INTO categories (name, slug, icon, color, description, image_url, is_active)
-        VALUES ($1, $2, $3, $4, $5, $6, true)
-        ON CONFLICT (slug) DO UPDATE SET icon = $3, color = $4, image_url = $6
-      `, [cat.name, cat.slug, cat.icon, cat.color, cat.desc, cat.image]);
+        INSERT INTO categories (name, slug, icon, color, description, is_active)
+        VALUES ($1, $2, $3, $4, $5, true)
+        ON CONFLICT (slug) DO UPDATE SET icon = $3, color = $4
+      `, [cat.name, cat.slug, cat.icon, cat.color, cat.desc]);
       console.log(`  ✅ Category: ${cat.name}`);
     }
 

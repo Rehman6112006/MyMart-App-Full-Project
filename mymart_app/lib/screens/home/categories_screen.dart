@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../config/theme.dart';
 import '../../models/category.dart';
 import '../../services/category_service.dart';
@@ -170,7 +169,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                    
                   return _CategoryCard(
                     name: category.name,
-                    imageUrl: category.image,
                     imagePath: imagePath,
                     icon: icon,
                     color: color,
@@ -195,7 +193,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
 class _CategoryCard extends StatelessWidget {
   final String name;
-  final String? imageUrl;
   final String imagePath;
   final String icon;
   final Color color;
@@ -203,7 +200,6 @@ class _CategoryCard extends StatelessWidget {
 
   const _CategoryCard({
     required this.name,
-    this.imageUrl,
     required this.imagePath,
     required this.icon,
     required this.color,
@@ -242,26 +238,13 @@ class _CategoryCard extends StatelessWidget {
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(20),
                   ),
-                  child: imageUrl != null && imageUrl!.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: imageUrl!,
-                          fit: BoxFit.cover,
-                          placeholder: (_, __) => Center(child: Text(icon, style: const TextStyle(fontSize: 48))),
-                          errorWidget: (_, __, ___) => Image.asset(
-                            imagePath,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Center(
-                              child: Text(icon, style: const TextStyle(fontSize: 48)),
-                            ),
-                          ),
-                        )
-                      : Image.asset(
-                          imagePath,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Center(
-                            child: Text(icon, style: const TextStyle(fontSize: 48)),
-                          ),
-                        ),
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Center(
+                      child: Text(icon, style: const TextStyle(fontSize: 48)),
+                    ),
+                  ),
                 ),
               ),
             ),

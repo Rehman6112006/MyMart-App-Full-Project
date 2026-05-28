@@ -4,14 +4,14 @@ const { v4: uuidv4 } = require('uuid');
 // Create Category (Admin only)
 exports.createCategory = async (req, res) => {
   try {
-    const { name, description, icon, color, image_url, is_featured } = req.body;
+    const { name, description, icon, color, is_featured } = req.body;
     const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
     const result = await pool.query(
-      `INSERT INTO categories (id, name, slug, description, icon, color, image_url, is_featured, is_active, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true, NOW(), NOW())
+      `INSERT INTO categories (id, name, slug, description, icon, color, is_featured, is_active, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, true, NOW(), NOW())
        RETURNING *`,
-      [uuidv4(), name, slug, description || '', icon || '📦', color || '#6366F1', image_url || '', is_featured || false]
+      [uuidv4(), name, slug, description || '', icon || '📦', color || '#6366F1', is_featured || false]
     );
 
     res.status(201).json({
@@ -29,7 +29,7 @@ exports.createCategory = async (req, res) => {
 exports.getAllCategories = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, name, slug, description, icon, color, image_url, is_featured
+      `SELECT id, name, slug, description, icon, color, is_featured
        FROM categories
        WHERE is_active = true
        ORDER BY is_featured DESC, name ASC`
@@ -50,12 +50,12 @@ exports.getAllCategories = async (req, res) => {
 exports.updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, icon, color, image_url, is_featured } = req.body;
+    const { name, description, icon, color, is_featured } = req.body;
 
     const result = await pool.query(
-      `UPDATE categories SET name = $1, description = $2, icon = $3, color = $4, image_url = $5, is_featured = $6, updated_at = CURRENT_TIMESTAMP
-       WHERE id = $7 RETURNING *`,
-      [name, description, icon, color, image_url || '', is_featured, id]
+      `UPDATE categories SET name = $1, description = $2, icon = $3, color = $4, is_featured = $5, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $6 RETURNING *`,
+      [name, description, icon, color, is_featured, id]
     );
 
     res.json({
@@ -118,7 +118,7 @@ exports.getCategoryTree = async (req, res) => {
   try {
     // Just return flat list if parent_id doesn't exist
     const result = await pool.query(
-      `SELECT id, name, slug, description, icon, color, image_url, is_featured
+      `SELECT id, name, slug, description, icon, color, is_featured
        FROM categories
        WHERE is_active = true
        ORDER BY is_featured DESC, name ASC`
@@ -140,7 +140,7 @@ exports.getFeaturedCategories = async (req, res) => {
   try {
     // Get featured categories first, then top categories by product count
     const result = await pool.query(
-      `SELECT c.id, c.name, c.slug, c.description, c.icon, c.color, c.image_url,
+      `SELECT c.id, c.name, c.slug, c.description, c.icon, c.color,
               COUNT(p.id) as product_count
        FROM categories c
        LEFT JOIN products p ON p.category_id = c.id AND p.is_active = true
