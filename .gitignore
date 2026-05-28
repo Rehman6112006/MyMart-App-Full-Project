@@ -1,0 +1,45 @@
+node_modules/
+.vs/
+.vscode/
+.idea/
+*.log
+*.zip
+.env
+.env.local
+.DS_Store
+Thumbs.db
+dist/
+build/
+.cache/
+coverage/
+
+# Flutter
+mymart_app/build/
+mymart_app/.dart_tool/
+mymart_app/.packages
+mymart_app/.pub/
+mymart_app/pubspec.lock
+mymart_app/android/.gradle/
+mymart_app/android/.kotlin/
+mymart_app/android/.cxx/
+mymart_app/android/build/
+mymart_app/android/local.properties
+mymart_app/android/app/build/
+mymart_app/ios/Pods/
+mymart_app/ios/.symlinks/
+mymart_app/ios/build/
+
+# Node.js
+backend/node_modules/
+backend/package-lock.json
+admin-dashboard/node_modules/
+admin-dashboard/package-lock.json
+vendor-dashboard-react/node_modules/
+vendor-dashboard-react/package-lock.json
+
+# Java
+hs_err_pid*.log
+replay_pid*.log
+
+# Jetro
+.jetro/

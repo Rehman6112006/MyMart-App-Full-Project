@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "jetro": {
+      "type": "stdio",
+      "command": "C:\\Users\\Usman\\.jetro\\runtime\\node-win32-x64.exe",
+      "args": [
+        "C:\\Users\\Usman\\.jetro\\mcp-server\\index.js"
+      ],
+      "env": {
+        "JET_WORKSPACE": "d:\\Mymart",
+        "JET_API_URL": "https://api.jetro.ai",
+        "PATH": "C:\\Users\\Usman\\.jetro\\runtime;C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.10.7-hotspot\\bin;C:\\Python314\\Scripts\\;C:\\Python314\\;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\java8path;C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath;C:\\Program Files\\Microsoft\\jdk-17.0.14.7-hotspot\\bin;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\;C:\\WINDOWS\\System32\\OpenSSH\\;C:\\Program Files\\dotnet\\;C:\\Program Files (x86)\\Tencent\\??web?????\\dll;C:\\Program Files\\nodejs\\;C:\\ProgramData\\chocolatey\\bin;C:\\Users\\Usman\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\;C:\\Users\\Usman\\AppData\\Local\\Programs\\Python\\Python313\\;C:\\Users\\Usman\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2025.2.4\\bin;C:\\Users\\Usman\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Users\\Usman\\AppData\\Roaming\\npm;C:\\Users\\Usman\\AppData\\Local\\Programs\\Antigravity\\bin;C:\\Program Files\\PostgreSQL\\13\\bin;c:\\Android\\sdk\\cmdline-tools\\latest\\bin;c:\\Android\\sdk\\platform-tools;C:\\flutter\\bin;C:\\Program Files\\Git\\cmd;C:\\Users\\Usman\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\;C:\\Users\\Usman\\AppData\\Local\\Programs\\Python\\Python313\\;C:\\Users\\Usman\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Usman\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C:\\Users\\Usman\\AppData\\Roaming\\npm;C:\\flutter\\bin"
+      }
+    }
+  }
+}
