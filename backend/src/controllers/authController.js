@@ -1,12 +1,14 @@
 const pool = require('../config/database');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
 const { sendOTPEmail } = require('../services/sendgridEmail');
 const validator = require('../middleware/validator');
 
 exports.register = async (req, res) => {
+  // FIX: Dynamic import for uuid (ES Module fix)
+  const { v4: uuidv4 } = await import('uuid');
+
   const body = req.body || {};
   const { email, password, firstName, lastName, role, phone } = body;
 
@@ -425,4 +427,4 @@ exports.verifyOtp = async (req, res) => {
       error: 'Failed to verify OTP. Please try again.'
     });
   }
-};
+}; 
