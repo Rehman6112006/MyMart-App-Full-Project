@@ -1,14 +1,5 @@
-import 'dart:io' show Platform;
-
 class ApiConfig {
-  static String get baseUrl {
-    try {
-      if (Platform.isAndroid) {
-        return 'http://10.0.2.2:5000';
-      }
-    } catch (_) {}
-    return 'http://localhost:5000';
-  }
+  static String get baseUrl => 'https://my-mart-backend-two.vercel.app';
 
   // Default headers for API requestsr
   static Map<String, String> get headers => {
