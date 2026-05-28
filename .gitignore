@@ -43,3 +43,11 @@ replay_pid*.log
 
 # Jetro
 .jetro/
+
+# Token files
+*_token.txt
+
+# Empty data folders
+data/datasets/
+data/lists/
+data/stocks/
