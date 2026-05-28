@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
 const pool = require('./src/config/database');
 
 // Import routes
@@ -210,7 +209,7 @@ app.get('/api/debug/stats', async (req, res) => {
         products: parseInt(productCount.rows[0].count),
         categories: parseInt(categoryCount.rows[0].count)
       },
-      stores: stores.rows,
+      stores: rows,
       vendors: vendors.rows
     });
   } catch (error) {
